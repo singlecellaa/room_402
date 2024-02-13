@@ -1,5 +1,9 @@
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework.views import APIView
+from room_app import models
+from rest_framework import serializers
+from rest_framework.viewsets import ModelViewSet
 
 class ChoosingView(APIView):
     #choose to be student
@@ -36,19 +40,32 @@ class SignInAndOutView(APIView):
     #if name listed in the conferrence member and in the right place, succeed and record
     pass 
 
-class ReservationView(APIView):
-    #date list: past the date today to form the list
-    #time choosing: start and end, hour and minute
-    #reminder time ahead: range 0-60 minute
-    #club
-    #member expected in it, choose from the database of club member
-    #add member manually
-    pass 
+class ReservationSerializer(serializers.ModelSerializer):
+    start_time = serializers.DateTimeField(format='%Y-%m-%d  %H-%M-%S')
+    end_time = serializers.DateTimeField(format='%Y-%m-%d  %H-%M-%S')
+    class Meta:
+        model = models.Reservation
+        fields = '__all__'
+        extra_kwargs = {
+            'state':{'read_only':True},
+            'on_time':{'read_only':True},
+            'user':{'read_only':True},
+        }
+        
+class ReservationView(ModelViewSet):
+    queryset = models.Reservation.objects
+    serializer_class = ReservationSerializer
 
-class CancelView(APIView):
-    #list of conferrences
-    #button of canceling, a pop-up to check and confirm
-    pass 
+class CancelSerializer(serializers.ModelSerializer):
+    start_time = serializers.DateTimeField(format='%Y-%m-%d  %H-%M-%S')
+    end_time = serializers.DateTimeField(format='%Y-%m-%d  %H-%M-%S')
+    class Meta:
+        model = models.Reservation
+        fields = ['id','start_time','end_time']
+        
+class CancelView(ModelViewSet):
+    queryset = models.Reservation.objects
+    serializer_class = CancelSerializer
 
 class DsyfunView(APIView):
     #description
