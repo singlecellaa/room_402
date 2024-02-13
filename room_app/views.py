@@ -73,6 +73,7 @@ class StudentMyView(APIView):
 
 class ManagerNoticeView(APIView):
     #below without “首页”, the same to StudentNoticeView perhaps
+    #publish notification
     pass 
 
 class ManagerMyView(APIView):
