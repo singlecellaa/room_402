@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 # from ext.hook import HookSerializer
 from rest_framework import status
 import datetime
+from rest_framework import exceptions
 
 class ChoosingView(APIView):
     #choose to be student
@@ -42,12 +43,18 @@ class SignInAndOutView(APIView):
     #button of sign-in and sign-out
     #if name listed in the conferrence member and in the right place, succeed and record
     pass 
+
 class UserModelSerializer(serializers.ModelSerializer):
     depart = serializers.CharField(read_only=True,source='depart.name')
     club = serializers.CharField(read_only=True,source='club.name')
     class Meta:
         model = models.User
         fields = ['name','depart','club']
+        
+class ReservationTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Reservation
+        fields = ['start_time','end_time']
         
 class ReservationSerializer(serializers.ModelSerializer):
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
@@ -62,24 +69,41 @@ class ReservationSerializer(serializers.ModelSerializer):
             'state':{'read_only':True,'source':'get_state_display'}
         }
         
+    def validate_start_time(self,value):
+        now = datetime.datetime.now(datetime.timezone.utc)
+        if value > now:
+            return value
+        else:
+            raise exceptions.ValidationError('起始时间应不早于当前时间')
+        
+    def validate(self,attrs):
+        start_time = attrs['start_time']
+        end_time = attrs['end_time']
+        if start_time >= end_time:
+            raise exceptions.ValidationError('结束时间应晚于起始时间')
+        if start_time - end_time > datetime.timedelta(hours=3):
+            raise exceptions.ValidationError('预约的时间过长')
+        queryset = models.Reservation.objects.all()
+        ser = ReservationTimeSerializer(instance=queryset,many=True)
+        data = ser.data
+        for i in data:
+            s_time = datetime.datetime.fromisoformat(i['start_time'])
+            e_time = datetime.datetime.fromisoformat(i['end_time'])
+            if s_time < start_time < e_time or s_time < end_time < e_time or start_time < s_time < end_time or start_time < e_time < end_time or (s_time==start_time and e_time==end_time):
+                raise exceptions.ValidationError('与已预定的时间冲突')
+        return attrs
+    
 class ReservationView(ModelViewSet):
     queryset = models.Reservation.objects
     serializer_class = ReservationSerializer
     
     def list(self, request, *args, **kwargs):
-        #need to be arranged by the time order
-        date = request.query_params['date']
-        formatted_date = tuple(int(num) for num in date.split('.'))
-        date = datetime.date(formatted_date[0],formatted_date[1],formatted_date[2])
+        date = datetime.datetime.fromisoformat(request.query_params['date'])
         queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=date)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
     def create(self, request, *args, **kwargs):
-        # time_now < start_time < end_time
-        # no replicated time
-            #get all time field that haven't come
-            #start time and end time not between the start time and end time of each other
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
