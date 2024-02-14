@@ -14,9 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+# from django.contrib import admin
 from django.urls import path
+from room_app import views
+# 'get':'retrive','put':'update','delete':'destroy'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
+    path('reservation/',views.ReservationView.as_view({'get':'list','post':'create'})),
+    path('cancel/',views.CancelView.as_view({'get':'list'})),
+    path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
+    path('sign/',views.SignInAndOutView.as_view()),
+    
 ]
