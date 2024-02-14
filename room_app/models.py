@@ -1,22 +1,27 @@
 from django.db import models
 
 class User(models.Model):
-    role = models.CharField() #user or manager
-    name = models.CharField(verbose_name='name', max_length=10)
-    phone_number = models.PhoneNumberField()
-    reservation = models.ForeignKey() #预约记录
-    breach_time = models.IntegerField() #违约次数
-    qualified = models.BooleanField() #是否有预约资格
+    role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')))
+    name = models.CharField(max_length=10)
+    # phone_number = models.PhoneNumberField()
     
-class Reservatioin(models.Model):
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    state = models.CharField() #pre, mid, or post
-    on_time = models.BooleanField()
-    member = models.ForeignKey()
-    count = models.IntegerField()
-    place = models.IntegerField() #402
-    floor = models.IntegerField() #4
+    depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE)
+    club = models.ForeignKey(to='Club',on_delete=models.CASCADE)
+    
+class Depart(models.Model):
+    name =models.CharField(max_length=10)
+    
+class Club(models.Model):
+    name = models.CharField(max_length=10)
+    depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE)
+    breach_time = models.IntegerField(verbose_name='违约次数')
+    
+class Reservation(models.Model):
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    state = models.IntegerField(choices=((1,'未开始'),(2,'正在进行'),(3,'已结束')),default=1)
+    on_time = models.IntegerField(choices=((1,'准时到达'),(2,'未准时')),blank=True,null=True)
+    user = models.ForeignKey(to='User',on_delete=models.CASCADE)
 
 class Notice(models.Model):
     broadcast = models.TextField()
@@ -27,5 +32,5 @@ class Notice(models.Model):
 class Dsyfunc(models.Model):
     item = models.CharField(max_length=15)
     description = models.TextField()
-    img = models.ImageField()
+    # img = models.ImageField()
     feedback_to_manager = models.TextField()
