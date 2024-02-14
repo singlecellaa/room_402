@@ -64,17 +64,15 @@ class CancelSerializer(serializers.ModelSerializer):
         fields = ['id','start_time','end_time']
         
 class CancelView(ModelViewSet):
-    
     queryset = models.Reservation.objects
     # print('queryset',queryset)
     serializer_class = CancelSerializer
     
     def list(self, request, *args, **kwargs):
         # print('request',request,type(request))
-        # print(request.query_params)
         user_id = request.query_params.get('user_id')
         # print('user_id',user_id)
-        queryset = self.filter_queryset(self.get_queryset()).filter(user_id=user_id)
+        queryset = self.filter_queryset(self.get_queryset()).filter(user_id=user_id,state=1)
         # print('list queryset',queryset)
         page = self.paginate_queryset(queryset)
         if page is not None:
