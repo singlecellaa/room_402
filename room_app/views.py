@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from room_app import models
 from rest_framework import serializers
 from rest_framework.viewsets import ModelViewSet
-# from ext.hook import HookSerializer
+from ext.hook import HookSerializer
 from rest_framework import status
 import datetime
 from rest_framework import exceptions
@@ -41,7 +41,7 @@ class HomeView(APIView):
 class SignInAndOutView(APIView):
     #list of conferrences
     #button of sign-in and sign-out
-    #if name listed in the conferrence member and in the right place, succeed and record
+    
     pass 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -56,10 +56,9 @@ class ReservationTimeSerializer(serializers.ModelSerializer):
         model = models.Reservation
         fields = ['start_time','end_time']
         
-class ReservationSerializer(serializers.ModelSerializer):
+class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
-    user = UserModelSerializer(read_only=True)
     class Meta:
         model = models.Reservation
         fields = '__all__'
@@ -69,6 +68,12 @@ class ReservationSerializer(serializers.ModelSerializer):
             'state':{'read_only':True,'source':'get_state_display'}
         }
         
+    def nb_user(self,obj):
+        user_id = obj['user'].id
+        queryset = models.User.objects.all().filter(id=user_id)
+        ser = UserModelSerializer(instance=queryset,many=True)
+        return ser.data
+    
     def validate_start_time(self,value):
         now = datetime.datetime.now(datetime.timezone.utc)
         if value > now:
@@ -104,6 +109,8 @@ class ReservationView(ModelViewSet):
         return Response(serializer.data)
     
     def create(self, request, *args, **kwargs):
+        user_id = request.query_params.get('user_id')
+        request.data['user'] = int(user_id)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
