@@ -25,5 +25,6 @@ urlpatterns = [
     path('cancel/',views.CancelView.as_view({'get':'list'})),
     path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
     path('sign/',views.SignInAndOutView.as_view()),
-    
+    path('feedback/',views.FeedbackView.as_view()),
+    path('dsyfunc/',views.DsyfuncView.as_view()),
 ]
