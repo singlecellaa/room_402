@@ -5,6 +5,7 @@ from room_app import models
 from rest_framework import serializers
 from rest_framework.viewsets import ModelViewSet
 from ext.hook import HookSerializer
+from ext import evaluate
 from rest_framework import status
 import datetime
 from rest_framework import exceptions
@@ -77,11 +78,16 @@ class SignInAndOutView(ModelViewSet):
         existing_value = eval('instance.'+option)
         if existing_value == None:
             request.data[option] = now
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
+            
+        evaluate.evaluate_state()
+        evaluate.evaluate_breach()
+        evaluate.get_breach_time()
         return Response(serializer.data)
     
 class UserModelSerializer(serializers.ModelSerializer):
