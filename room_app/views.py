@@ -41,8 +41,8 @@ class HomeView(APIView):
 class SignInAndOutView(APIView):
     #list of conferrences
     #button of sign-in and sign-out
-    
-    pass 
+
+    pass
 
 class UserModelSerializer(serializers.ModelSerializer):
     depart = serializers.CharField(read_only=True,source='depart.name')

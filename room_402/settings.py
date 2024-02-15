@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'room_app.apps.RoomAppConfig',
+    'user'
 ]
 
 # 修改DRF认证
