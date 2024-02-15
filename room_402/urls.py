@@ -24,6 +24,6 @@ urlpatterns = [
     path('reservation/',views.ReservationView.as_view({'get':'list','post':'create'})),
     path('cancel/',views.CancelView.as_view({'get':'list'})),
     path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
-    path('sign/',views.SignInAndOutView.as_view()),
-    
+    path('sign/',views.SignInAndOutView.as_view({'get':'list'})),
+    path('sign/<int:pk>',views.SignInAndOutView.as_view({'put':'update'})),
 ]
