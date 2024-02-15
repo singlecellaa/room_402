@@ -8,6 +8,8 @@ from ext.hook import HookSerializer
 from rest_framework import status
 import datetime
 from rest_framework import exceptions
+# from rest_framework.parsers import JSONParser
+# from ext.parse import MyParser
 
 class ChoosingView(APIView):
     #choose to be student
@@ -52,7 +54,7 @@ class SignSerializer(serializers.ModelSerializer):
 class SignInAndOutView(ModelViewSet):
     queryset = models.Reservation.objects
     serializer_class = SignSerializer
-        
+
     def list(self, request, *args, **kwargs):
         now = datetime.datetime.now()#(datetime.timezone.utc)
         today = now.date()
@@ -66,16 +68,15 @@ class SignInAndOutView(ModelViewSet):
         instance = self.get_object()
         
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-        option = int(request.query_params['option'])
+        # option = int(request.query_params['option'])
+        option = request.data['option']
         if option == 1:
             option = 'sign_in_time'
         elif option == 2:
             option = 'sign_out_time'
         existing_value = eval('instance.'+option)
-        print('existing_value',existing_value)
         if existing_value == None:
             request.data[option] = now
-        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
