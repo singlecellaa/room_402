@@ -1,12 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
-    role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')))
-    name = models.CharField(max_length=10)
+class User(AbstractUser):
+    role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
+    name = models.CharField(max_length=10, null=True)
     # phone_number = models.PhoneNumberField()
     
-    depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE)
-    club = models.ForeignKey(to='Club',on_delete=models.CASCADE)
+    depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE, null=True)
+    club = models.ForeignKey(to='Club',on_delete=models.CASCADE, null=True)
     
 class Depart(models.Model):
     name =models.CharField(max_length=10)
