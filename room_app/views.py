@@ -154,12 +154,12 @@ class DsyfuncView(ModelViewSet):
     serializer_class = DsyfuncSerializer
 
     def save_dsyfun(self, request):
-        dsyfunc = DsyfuncSerializer(data=request.data, many=True)
+        dsyfunc = DsyfuncSerializer(data=request.data)
 
         if not dsyfunc.is_valid():
             return Response(dsyfunc.errors)
         else:
-            dsyfunc.save()
+            dsyfunc_instance=dsyfunc.save()
             return Response(dsyfunc.data)
 
 class FeedbackSerializer(serializers.ModelSerializer):
@@ -177,12 +177,13 @@ class FeedbackView(ModelViewSet):
     serializer_class = FeedbackSerializer
 
     def save_feedback(self,request):
-        feedback=FeedbackSerializer(data=request.data,many=True)
+        feedback=FeedbackSerializer(data=request.data)
 
         if not feedback.is_valid():
             return Response(feedback.errors)
         else:
-            feedback.save()
+            feedback_instance=feedback.save()
+
             return Response(feedback.data)
 
 class StudentNoticeView(APIView):
