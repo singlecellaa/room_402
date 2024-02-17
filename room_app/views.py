@@ -5,9 +5,12 @@ from room_app import models
 from rest_framework import serializers
 from rest_framework.viewsets import ModelViewSet
 from ext.hook import HookSerializer
+from ext import evaluate
 from rest_framework import status
 import datetime
 from rest_framework import exceptions
+# from rest_framework.parsers import JSONParser
+# from ext.parse import MyParser
 
 class ChoosingView(APIView):
     #choose to be student
@@ -37,13 +40,55 @@ class HomeView(APIView):
     #dysfunc
     #feedback
     pass 
+class SignSerializer(serializers.ModelSerializer):
+    start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
+    end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
+    sign_in_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False)
+    sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False)
+    class Meta:
+        model = models.Reservation
+        fields = ['id','start_time','end_time','sign_in_time','sign_out_time','user']
+    extra_kwargs = {
+        'id':{'read_only':True},
+        'user':{'read_only':True},
+    }
+class SignInAndOutView(ModelViewSet):
+    queryset = models.Reservation.objects
+    serializer_class = SignSerializer
 
-class SignInAndOutView(APIView):
-    #list of conferrences
-    #button of sign-in and sign-out
-
-    pass
-
+    def list(self, request, *args, **kwargs):
+        now = datetime.datetime.now()#(datetime.timezone.utc)
+        today = now.date()
+        user_id = request.query_params['user_id']
+        queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=today,start_time__lte=now,end_time__gte=now-datetime.timedelta(minutes=10),user_id=user_id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+        # option = int(request.query_params['option'])
+        option = request.data['option']
+        if option == 1:
+            option = 'sign_in_time'
+        elif option == 2:
+            option = 'sign_out_time'
+        existing_value = eval('instance.'+option)
+        if existing_value == None:
+            request.data[option] = now
+        
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+            
+        evaluate.evaluate_state()
+        evaluate.evaluate_breach()
+        evaluate.get_breach_time()
+        return Response(serializer.data)
 class UserModelSerializer(serializers.ModelSerializer):
     depart = serializers.CharField(read_only=True,source='depart.name')
     club = serializers.CharField(read_only=True,source='club.name')

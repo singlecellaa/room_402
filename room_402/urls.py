@@ -30,6 +30,8 @@ urlpatterns = [
     path('reservation/',views.ReservationView.as_view({'get':'list','post':'create'})),
     path('cancel/',views.CancelView.as_view({'get':'list'})),
     path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
+    path('sign/',views.SignInAndOutView.as_view({'get':'list'})),
+    path('sign/<int:pk>',views.SignInAndOutView.as_view({'put':'update'})),
     path('api/sign/',sign.SignView.as_view()),
     # 获取Token的接口
     path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
