@@ -17,6 +17,12 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 from room_app import views
+from user.views import sign, login
+# 导入 simplejwt 提供的几个验证视图类
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenVerifyView
+)
 # 'get':'retrive','put':'update','delete':'destroy'
 
 urlpatterns = [
@@ -27,4 +33,13 @@ urlpatterns = [
     path('sign/',views.SignInAndOutView.as_view()),
     path('feedback/',views.FeedbackView.as_view()),
     path('dsyfunc/',views.DsyfuncView.as_view()),
+    path('sign/',views.SignInAndOutView.as_view({'get':'list'})),
+    path('sign/<int:pk>',views.SignInAndOutView.as_view({'put':'update'})),
+    path('api/sign/',sign.SignView.as_view()),
+    # 获取Token的接口
+    path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+    # 刷新Token有效期的接口
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # 验证Token的有效性
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
