@@ -89,7 +89,6 @@ class SignInAndOutView(ModelViewSet):
         evaluate.evaluate_breach()
         evaluate.get_breach_time()
         return Response(serializer.data)
-    
 class UserModelSerializer(serializers.ModelSerializer):
     depart = serializers.CharField(read_only=True,source='depart.name')
     club = serializers.CharField(read_only=True,source='club.name')
