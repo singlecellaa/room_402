@@ -28,12 +28,15 @@ class Reservation(models.Model):
     user = models.ForeignKey(to='User',on_delete=models.CASCADE,blank=True,null=True)
     class Meta:
         ordering = ('start_time',)
+        
+class Broadcast(models.Model):
+    Broadcast = models.TextField()
     
 class Notice(models.Model):
-    broadcast = models.TextField()
-    reserve_succeed = models.TextField()
-    reminder_to_manager = models.TextField() #要传到微信？
-    reminder_to_user = models.TextField()
+    source = models.IntegerField(choices=((1,'系统消息'),(2,'管理员通知')))
+    content = models.TextField()
+    time = models.DateTimeField()
+    state = models.IntegerField(choices=((1,'已读'),(2,'未读')),default=1)
     
 class Dsyfunc(models.Model):
     item = models.CharField(max_length=15)
