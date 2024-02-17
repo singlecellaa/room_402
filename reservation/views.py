@@ -25,7 +25,7 @@ class SignInAndOutView(ModelViewSet):
     serializer_class = SignSerializer
 
     def list(self, request, *args, **kwargs):
-        now = datetime.datetime.now()#(datetime.timezone.utc)
+        now = datetime.datetime.now().astimezone()
         today = now.date()
         user_id = request.query_params['user_id']
         queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=today,start_time__lte=now,end_time__gte=now-datetime.timedelta(minutes=10),user_id=user_id)
@@ -89,7 +89,7 @@ class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
         return ser.data
     
     def validate_start_time(self,value):
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now().astimezone()
         if value > now:
             return value
         else:
