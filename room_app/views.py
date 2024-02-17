@@ -12,6 +12,8 @@ from rest_framework import exceptions
 # from rest_framework.parsers import JSONParser
 # from ext.parse import MyParser
 
+
+
 class ChoosingView(APIView):
     #choose to be student
     #choose to be manager
@@ -178,15 +180,56 @@ class CancelView(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset()).filter(user_id=user_id,state=1)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-    
-class DsyfunView(APIView):
-    #description
-    #image
-    pass 
 
-class FeedbackView(APIView):
-    #say something
-    pass 
+class DsyfuncSerializer(serializers.ModelSerializer):
+    time = serializers.DateField(format='%m-%d')
+    item=serializers.CharField(required=True)
+    img = serializers.ImageField()
+    description=serializers.CharField(required=True)
+
+    class Meta:
+        model = models.Dsyfunc
+        fields = ['time','item','img','description']
+
+    def create(self, validated_data):
+        return models.Dsyfunc(**validated_data)
+
+class DsyfuncView(ModelViewSet):
+    queryset = models.Dsyfunc.objects
+    serializer_class = DsyfuncSerializer
+
+    def save_dsyfun(self, request):
+        dsyfunc = DsyfuncSerializer(data=request.data)
+
+        if not dsyfunc.is_valid():
+            return Response(dsyfunc.errors)
+        else:
+            dsyfunc_instance=dsyfunc.save()
+            return Response(dsyfunc.data)
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    description=serializers.CharField(required=True)
+    time = serializers.DateField(format='%m-%d')
+    class Meta:
+        model = models.Feedback
+        fields = ['time','description']
+
+    def create(self, validated_data):
+        return models.Feedback(**validated_data)
+
+class FeedbackView(ModelViewSet):
+    queryset = models.Feedback.objects
+    serializer_class = FeedbackSerializer
+
+    def save_feedback(self,request):
+        feedback=FeedbackSerializer(data=request.data)
+
+        if not feedback.is_valid():
+            return Response(feedback.errors)
+        else:
+            feedback_instance=feedback.save()
+
+            return Response(feedback.data)
 
 class StudentNoticeView(APIView):
     #default: all

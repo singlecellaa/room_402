@@ -38,5 +38,10 @@ class Notice(models.Model):
 class Dsyfunc(models.Model):
     item = models.CharField(max_length=15)
     description = models.TextField()
-    # img = models.ImageField()
-    feedback_to_manager = models.TextField()
+    img = models.ImageField()
+    time = models.DateField(auto_now_add=True)  # 反馈创建时间
+
+class Feedback(models.Model):
+    time = models.DateField(auto_now_add=True)  # 反馈创建时间
+    description = models.TextField()    #反馈内容
+
