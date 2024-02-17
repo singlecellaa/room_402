@@ -1,4 +1,4 @@
-from room_app.models import Reservation,Club
+from reservation.models import Reservation,Club
 import datetime
 
 def evaluate_state():

@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'room_app.apps.RoomAppConfig',
-    'user'
+    #local
+    'reservation',
+    'message',
+    'user',
 ]
 
 # 修改DRF认证

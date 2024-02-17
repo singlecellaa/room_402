@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from room_app.models import User
+from reservation.models import User
 from rest_framework.response import Response
 
 

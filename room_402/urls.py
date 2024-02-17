@@ -16,7 +16,7 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path
-from room_app import views
+from reservation import views
 from user.views import sign, login
 # 导入 simplejwt 提供的几个验证视图类
 from rest_framework_simplejwt.views import (
