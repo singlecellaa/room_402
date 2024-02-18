@@ -1,21 +1,10 @@
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import serializers
+from message.serializer import DsyfuncSerializer,FeedbackSerializer,NoticeSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from reservation import models
+from message import models
 
-class DsyfuncSerializer(serializers.ModelSerializer):
-    time = serializers.DateField(format='%m-%d')
-    item=serializers.CharField(required=True)
-    img = serializers.ImageField()
-    description=serializers.CharField(required=True)
-
-    class Meta:
-        model = models.Dsyfunc
-        fields = ['time','item','img','description']
-
-    def create(self, validated_data):
-        return models.Dsyfunc(**validated_data)
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
@@ -30,15 +19,6 @@ class DsyfuncView(ModelViewSet):
             dsyfunc_instance=dsyfunc.save()
             return Response(dsyfunc.data)
 
-class FeedbackSerializer(serializers.ModelSerializer):
-    description=serializers.CharField(required=True)
-    time = serializers.DateField(format='%m-%d')
-    class Meta:
-        model = models.Feedback
-        fields = ['time','description']
-
-    def create(self, validated_data):
-        return models.Feedback(**validated_data)
 
 class FeedbackView(ModelViewSet):
     queryset = models.Feedback.objects
@@ -54,22 +34,23 @@ class FeedbackView(ModelViewSet):
 
             return Response(feedback.data)
 
+class NoticeView(ModelViewSet):
+    queryset = models.Notice.objects.all()
+    serializer_class = NoticeSerializer
+    @action(methods=["post"], detail=True)
+    def read(self, request, pk=None):   #标记已读
+        notice: models.Notice = self.get_object()
+        notice.read = True
+        notice.save()
+        serializer = self.get_serializer(notice)
+        return Response(serializer.data)
+
 class StudentNoticeView(APIView):
     #default: all
     #filter: all, not read, read
     pass 
 
-class StudentMyView(APIView):
-    #register
-    #login
-    #reservation record
-    #about us
-    pass 
-
 class ManagerNoticeView(APIView):
     #below without “首页”, the same to StudentNoticeView perhaps
     #publish notification
-    pass 
-
-class ManagerMyView(APIView):
     pass 

@@ -17,6 +17,7 @@ Including another URLconf
 # from django.contrib import admin
 from django.urls import path
 from reservation import views
+from message import views as message_view
 from user.views import sign, login
 # 导入 simplejwt 提供的几个验证视图类
 from rest_framework_simplejwt.views import (
@@ -31,8 +32,8 @@ urlpatterns = [
     path('cancel/',views.CancelView.as_view({'get':'list'})),
     path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
     path('sign/',views.SignInAndOutView.as_view()),
-    path('feedback/',views.FeedbackView.as_view()),
-    path('dsyfunc/',views.DsyfuncView.as_view()),
+    path('feedback/',message_view.FeedbackView.as_view()),
+    path('dsyfunc/',message_view.DsyfuncView.as_view()),
     path('sign/',views.SignInAndOutView.as_view({'get':'list'})),
     path('sign/<int:pk>',views.SignInAndOutView.as_view({'put':'update'})),
     path('api/sign/',sign.SignView.as_view()),
