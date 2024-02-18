@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 # from django.contrib import admin
 from django.urls import path
 from reservation import views
@@ -24,23 +25,30 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+
 # 'get':'retrive','put':'update','delete':'destroy'
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    path('reservation/',views.ReservationView.as_view({'get':'list','post':'create'})),
-    path('cancel/',views.CancelView.as_view({'get':'list'})),
-    path('cancel/<int:pk>',views.CancelView.as_view({'get':'retrieve','put':'update','delete':'destroy'})),
-    path('sign/',views.SignInAndOutView.as_view()),
-    path('feedback/',message_view.FeedbackView.as_view()),
-    path('dsyfunc/',message_view.DsyfuncView.as_view()),
-    path('sign/',views.SignInAndOutView.as_view({'get':'list'})),
-    path('sign/<int:pk>',views.SignInAndOutView.as_view({'put':'update'})),
-    path('api/sign/',sign.SignView.as_view()),
-    # 获取Token的接口
-    path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
-    # 刷新Token有效期的接口
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # 验证Token的有效性
-    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-]
+                  # path('admin/', admin.site.urls),
+                  path('reservation/', views.ReservationView.as_view({'get': 'list', 'post': 'create'})),
+                  path('cancel/', views.CancelView.as_view({'get': 'list'})),
+                  path('cancel/<int:pk>',
+                       views.CancelView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+                  path('sign/', views.SignInAndOutView.as_view()),
+                  path('feedback/', message_view.FeedbackView.as_view()),
+                  path('dsyfunc/', message_view.DsyfuncView.as_view()),
+                  path('sign/', views.SignInAndOutView.as_view({'get': 'list'})),
+                  path('sign/<int:pk>', views.SignInAndOutView.as_view({'put': 'update'})),
+                  path('api/sign/', sign.SignView.as_view()),
+                  # 获取Token的接口
+                  path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+                  # 刷新Token有效期的接口
+                  path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+                  # 验证Token的有效性
+                  path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+                  # 上传图片
+                  path('admin/', admin.site.urls),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

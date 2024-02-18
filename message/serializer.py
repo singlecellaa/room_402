@@ -25,10 +25,10 @@ class FeedbackSerializer(serializers.ModelSerializer):
         return models.Feedback(**validated_data)
 
 class NoticeSerializer(serializers.ModelSerializer):
-    content = serializers.CharField(required=True, verbose_name='消息内容')
-    time = serializers.DateField(format='%m-%d', verbose_name='时间')
-    source = serializers.IntegerField(verbose_name='消息来源')
-    read = serializers.BooleanField(default=False)  # 判断是否已读
+    content = serializers.CharField(required=True)
+    time = serializers.DateField(format='%m-%d')
+    source = serializers.IntegerField()
+    read_status = serializers.BooleanField(default=False)  # 判断是否已读
     class Meta:
         model = models.Notice
         fields = ['time','source','read','content']

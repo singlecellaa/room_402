@@ -46,7 +46,7 @@ class NoticeView(ModelViewSet):
     @action(methods=["post"], detail=True)
     def read(self, request, pk=None):  # 标记已读
         notice: models.Notice = self.get_object()
-        notice.read = True
+        notice.read_status = True
         notice.save()
         serializer = self.get_serializer(notice)
         return Response(serializer.data)
