@@ -4,7 +4,7 @@ from message import models
 class DsyfuncSerializer(serializers.ModelSerializer):
     time = serializers.DateField(format='%m-%d')
     item=serializers.CharField(required=True)
-    img = serializers.ImageField()
+    img = serializers.ImageField(required=False)
     description=serializers.CharField(required=True)
 
     class Meta:
@@ -24,14 +24,25 @@ class FeedbackSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return models.Feedback(**validated_data)
 
+class BroadcastSerializer(serializers.ModelSerializer):
+    broadcast =serializers.CharField(required=True)
+    time = serializers.DateField(format='%m-%d')
+    class Meta:
+        model = models.Broadcast
+        fields = ['time','description']
+
+    def create(self, validated_data):
+        return models.Broadcast(**validated_data)
+
 class NoticeSerializer(serializers.ModelSerializer):
     content = serializers.CharField(required=True)
     time = serializers.DateField(format='%m-%d')
+    img = serializers.ImageField(required=False)
     source = serializers.IntegerField()
     read_status = serializers.BooleanField(default=False)  # 判断是否已读
     class Meta:
         model = models.Notice
-        fields = ['time','source','read','content']
+        fields = ['time','source','read','content','img','shared_people']
 
     def create(self, validated_data):
         return models.Notice(**validated_data)

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
+    objects = models.Manager()
     role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
     name = models.CharField(max_length=10, null=True)
     # phone_number = models.PhoneNumberField()
@@ -10,14 +11,17 @@ class User(AbstractUser):
     club = models.ForeignKey(to='Club',on_delete=models.CASCADE, null=True)
     
 class Depart(models.Model):
+    objects = models.Manager()
     name =models.CharField(max_length=10)
     
 class Club(models.Model):
+    objects = models.Manager()
     name = models.CharField(max_length=10)
     depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE)
     breach_time = models.IntegerField(verbose_name='违约次数')
     
 class Reservation(models.Model):
+    objects = models.Manager()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     sign_in_time = models.DateTimeField(blank=True,null=True)
@@ -28,23 +32,4 @@ class Reservation(models.Model):
     user = models.ForeignKey(to='User',on_delete=models.CASCADE,blank=True,null=True)
     class Meta:
         ordering = ('start_time',)
-        
-class Broadcast(models.Model):
-    Broadcast = models.TextField()
-    
-class Notice(models.Model):
-    source = models.IntegerField(choices=((1,'系统消息'),(2,'管理员通知')))
-    content = models.TextField()
-    time = models.DateTimeField()
-    state = models.IntegerField(choices=((1,'已读'),(2,'未读')),default=1)
-    
-class Dsyfunc(models.Model):
-    item = models.CharField(max_length=15)
-    description = models.TextField()
-    img = models.ImageField()
-    time = models.DateField(auto_now_add=True)  # 反馈创建时间
-
-class Feedback(models.Model):
-    time = models.DateField(auto_now_add=True)  # 反馈创建时间
-    description = models.TextField()    #反馈内容
 

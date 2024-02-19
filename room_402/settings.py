@@ -92,7 +92,7 @@ MIDDLEWARE = [
 ]
 
 
-AUTH_USER_MODEL = 'room_app.User'
+AUTH_USER_MODEL = 'reservation.User'
 
 CORS_ALLOW_CREDENTIALS = True  # 允许跨域时携带Cookie，默认为False
 CORS_ORIGIN_ALLOW_ALL = True  # 所有ip都可以访问后端接口
