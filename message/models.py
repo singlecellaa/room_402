@@ -1,14 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from reservation.models import Reservation
 
 
 # Create your models here.
-
-
 class Notice(models.Model):
     objects = models.Manager()
     source = models.IntegerField(choices=((1, '系统消息'), (2, '社团管理员通知'), (3, '房间管理员通知')),
@@ -114,3 +112,25 @@ def broadcast_to_notice(sender, instance, created, **kwargs):
             shared_people=User.objects.filter(role=1),
             content=instance.broadcast,
         )
+
+
+@receiver(pre_delete, sender=Reservation)
+def del_reservation_to_manager_notice(sender, instance, **kwargs):
+    Notice.objects.create(
+        source=1,
+        shared_people=User.objects.filter(role=2),
+        content="{}已取消{}--{} 对402房间的预约".format(instance.user.club.name,
+                                                    instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+                                                    instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
+    )
+
+
+@receiver(pre_delete, sender=Reservation)
+def del_reservation_to_user_notice(sender, instance,**kwargs):
+    Notice.objects.create(
+        source=1,
+        shared_people=instance.user,
+        content="您已成功取消{}--{} 对402房间的预约".format(instance.user.club.name,
+                                                    instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+                                                    instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
+    )
