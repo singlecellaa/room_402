@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
     #local
     'reservation',
     'message',
@@ -143,7 +144,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'room_402.wsgi.application'
-
+ASGI_APPLICATION = 'room_402.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

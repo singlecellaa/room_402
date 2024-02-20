@@ -2,10 +2,11 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer,BroadcastSerializer
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from message import models
+from message.models import Notice
+from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer, BroadcastSerializer
+
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
@@ -18,10 +19,10 @@ class DsyfuncView(ModelViewSet):
         dsyfunc = DsyfuncSerializer(data=request.data)
 
         if not dsyfunc.is_valid():
-            return Response(dsyfunc.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(dsyfunc.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             dsyfunc.save()
-            return Response(dsyfunc.data,status=status.HTTP_201_CREATED)
+            return Response(dsyfunc.data, status=status.HTTP_201_CREATED)
 
 
 class FeedbackView(ModelViewSet):
@@ -35,10 +36,10 @@ class FeedbackView(ModelViewSet):
         feedback = FeedbackSerializer(data=request.data)
 
         if not feedback.is_valid():
-            return Response(feedback.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(feedback.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             feedback.save()
-            return Response(feedback.data,status=status.HTTP_201_CREATED)
+            return Response(feedback.data, status=status.HTTP_201_CREATED)
 
 
 class BroadcastView(ModelViewSet):
@@ -52,10 +53,10 @@ class BroadcastView(ModelViewSet):
         broadcast = BroadcastSerializer(data=request.data)
 
         if not broadcast.is_valid():
-            return Response(broadcast.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(broadcast.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             broadcast.save()
-            return Response(broadcast.data,status=status.HTTP_201_CREATED)
+            return Response(broadcast.data, status=status.HTTP_201_CREATED)
 
 
 class NoticeView(ModelViewSet):
@@ -63,7 +64,7 @@ class NoticeView(ModelViewSet):
     serializer_class = NoticeSerializer
 
     @action(methods=["post"], detail=True)
-    def read(self,pk):
+    def read(self, pk):
         """
         标记已读
         """
@@ -71,7 +72,7 @@ class NoticeView(ModelViewSet):
         notice.read_status = True
         notice.save()
         serializer = self.get_serializer(notice)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=True)
     def get_unread_notice_number(self, user_id=None):
@@ -79,12 +80,13 @@ class NoticeView(ModelViewSet):
         获取未读信息数量
         """
         user = User.objects.get(pk=user_id)
-        unread_notice_count = user.notice_set.filter(read_status=False).count()
-        response_num={'value',unread_notice_count}
-        return Response(response_num,status=status.HTTP_200_OK)
+        notice = Notice.objects.filter(shared_people=user)
+        unread_notice_count = notice.filter(read_status=False).count()
+        response_num = {'value', unread_notice_count}
+        return Response(response_num, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=False)
-    def get_notice(self, request,user_id=None):
+    def get_notice(self, request, user_id=None):
         """
         获取未读/已读消息
         """
@@ -95,7 +97,7 @@ class NoticeView(ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=["get"], detail=False)
-    def get_all_notice(self,user_id=None):
+    def get_all_notice(self, user_id=None):
         """
         获取全部消息
         """

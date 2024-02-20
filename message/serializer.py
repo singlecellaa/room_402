@@ -42,7 +42,10 @@ class NoticeSerializer(serializers.ModelSerializer):
     read_status = serializers.BooleanField(default=False)  # 判断是否已读
     class Meta:
         model = models.Notice
-        fields = ['time','source','read','content','img','shared_people']
+        fields = ['time','source','read_status','content','img_url','shared_people']
+
+    def get_image_url(self, obj):
+        return obj.image_url
 
     def create(self, validated_data):
         return models.Notice(**validated_data)

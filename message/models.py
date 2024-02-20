@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from django.urls import reverse
 from reservation.models import Reservation
 
 
@@ -21,6 +21,14 @@ class Notice(models.Model):
 
     def __str__(self):
         return f"Notice: {self.content[:50]}"
+
+    def image_url(self):
+        if self.img and hasattr(self.img, 'url'):
+            return self.img.url
+        return ''
+
+    def get_absolute_url(self):
+        return reverse('notice_detail', args=[str(self.pk)])
 
 
 class Broadcast(models.Model):
