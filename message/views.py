@@ -1,75 +1,107 @@
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import serializers
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from reservation import models
+from message import models
+from message.models import Notice
+from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer, BroadcastSerializer
 
-class DsyfuncSerializer(serializers.ModelSerializer):
-    time = serializers.DateField(format='%m-%d')
-    item=serializers.CharField(required=True)
-    img = serializers.ImageField()
-    description=serializers.CharField(required=True)
-
-    class Meta:
-        model = models.Dsyfunc
-        fields = ['time','item','img','description']
-
-    def create(self, validated_data):
-        return models.Dsyfunc(**validated_data)
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
     serializer_class = DsyfuncSerializer
 
-    def save_dsyfun(self, request):
+    def save_dsyfunc(self, request):
+        """
+        存储故障报修信息
+        """
         dsyfunc = DsyfuncSerializer(data=request.data)
 
         if not dsyfunc.is_valid():
-            return Response(dsyfunc.errors)
+            return Response(dsyfunc.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            dsyfunc_instance=dsyfunc.save()
-            return Response(dsyfunc.data)
+            dsyfunc.save()
+            return Response(dsyfunc.data, status=status.HTTP_201_CREATED)
 
-class FeedbackSerializer(serializers.ModelSerializer):
-    description=serializers.CharField(required=True)
-    time = serializers.DateField(format='%m-%d')
-    class Meta:
-        model = models.Feedback
-        fields = ['time','description']
-
-    def create(self, validated_data):
-        return models.Feedback(**validated_data)
 
 class FeedbackView(ModelViewSet):
     queryset = models.Feedback.objects
     serializer_class = FeedbackSerializer
 
-    def save_feedback(self,request):
-        feedback=FeedbackSerializer(data=request.data)
+    def save_feedback(self, request):
+        """
+        存储意见信息
+        """
+        feedback = FeedbackSerializer(data=request.data)
 
         if not feedback.is_valid():
-            return Response(feedback.errors)
+            return Response(feedback.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            feedback_instance=feedback.save()
+            feedback.save()
+            return Response(feedback.data, status=status.HTTP_201_CREATED)
 
-            return Response(feedback.data)
 
-class StudentNoticeView(APIView):
-    #default: all
-    #filter: all, not read, read
-    pass 
+class BroadcastView(ModelViewSet):
+    queryset = models.Broadcast.objects
+    serializer_class = BroadcastSerializer
 
-class StudentMyView(APIView):
-    #register
-    #login
-    #reservation record
-    #about us
-    pass 
+    def save_broadcast(self, request):
+        """
+        存储公告信息
+        """
+        broadcast = BroadcastSerializer(data=request.data)
 
-class ManagerNoticeView(APIView):
-    #below without “首页”, the same to StudentNoticeView perhaps
-    #publish notification
-    pass 
+        if not broadcast.is_valid():
+            return Response(broadcast.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            broadcast.save()
+            return Response(broadcast.data, status=status.HTTP_201_CREATED)
 
-class ManagerMyView(APIView):
-    pass 
+
+class NoticeView(ModelViewSet):
+    queryset = models.Notice.objects.all()
+    serializer_class = NoticeSerializer
+
+    @action(methods=["post"], detail=True)
+    def read(self, pk):
+        """
+        标记已读
+        """
+        notice: models.Notice = self.get_object()
+        notice.read_status = True
+        notice.save()
+        serializer = self.get_serializer(notice)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], detail=True)
+    def get_unread_notice_number(self, user_id=None):
+        """
+        获取未读信息数量
+        """
+        user = User.objects.get(pk=user_id)
+        notice = Notice.objects.filter(shared_people=user)
+        unread_notice_count = notice.filter(read_status=False).count()
+        response_num = {'value', unread_notice_count}
+        return Response(response_num, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], detail=False)
+    def get_notice(self, request, user_id=None):
+        """
+        获取未读/已读消息
+        """
+        user = User.objects.get(pk=user_id)
+        queryset = models.Notice.objects.filter(shared_people=user)
+        queryset = queryset.filter(read_status=request.GET.get('read_status'))
+        serializer = NoticeSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=["get"], detail=False)
+    def get_all_notice(self, user_id=None):
+        """
+        获取全部消息
+        """
+        user = User.objects.get(pk=user_id)
+        queryset = models.Notice.objects.filter(shared_people=user)
+        serializer = NoticeSerializer(queryset, many=True)
+        return Response(serializer.data)

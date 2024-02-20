@@ -77,7 +77,6 @@ class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
         model = models.Reservation
         fields = '__all__'
         extra_kwargs = {
-            'state':{'read_only':True},
             'on_time':{'read_only':True},
             'state':{'read_only':True,'source':'get_state_display'}
         }

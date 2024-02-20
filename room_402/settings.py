@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
     #local
     'reservation',
     'message',
@@ -92,7 +93,7 @@ MIDDLEWARE = [
 ]
 
 
-AUTH_USER_MODEL = 'room_app.User'
+AUTH_USER_MODEL = 'reservation.User'
 
 CORS_ALLOW_CREDENTIALS = True  # 允许跨域时携带Cookie，默认为False
 CORS_ORIGIN_ALLOW_ALL = True  # 所有ip都可以访问后端接口
@@ -143,7 +144,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'room_402.wsgi.application'
-
+ASGI_APPLICATION = 'room_402.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -200,3 +201,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
