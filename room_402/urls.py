@@ -38,7 +38,7 @@ urlpatterns = [
                   path('cancel/<int:pk>',
                        views.CancelView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
                   path('feedback/', message_view.FeedbackView.as_view({'post':'save_feedback'})),
-                  path('dsyfunc/', message_view.DsyfuncView.as_view({'post':'save_dsyfunc'})),
+                  path('dsyfunc/', message_view.DsyfuncView.as_view({'post':'save_dsyfunc','get':'get_broadcast'})),
                   path('broadcast/', message_view.BroadcastView.as_view({'post':'save_broadcast'})),
                   path('notice/'),message_view.NoticeView.as_view({'post':'read'}),
                   path('notice/'),message_view.NoticeView.as_view({'get_unread_notice_number'}),

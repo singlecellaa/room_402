@@ -58,6 +58,15 @@ class BroadcastView(ModelViewSet):
             broadcast.save()
             return Response(broadcast.data, status=status.HTTP_201_CREATED)
 
+    @action(methods=["get"], detail=False)
+    def get_broadcast(self, request, user_id=None):
+        """
+        获取最新公告
+        """
+        queryset = models.Broadcast.objects.order_by('-id').first()
+        serializer = NoticeSerializer(queryset)
+        return Response(serializer.data)
+
 
 class NoticeView(ModelViewSet):
     queryset = models.Notice.objects.all()
