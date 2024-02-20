@@ -10,8 +10,6 @@ from models import Notice
 from reservation.models import User
 from message.serializer import NoticeSerializer
 
-Conn_list = []
-
 
 @database_sync_to_async
 def get_user(id):
@@ -49,7 +47,6 @@ class message_consumer(WebsocketConsumer):
         user = get_user(self.id)
         notice = get_notices(user)
         await self.send(json.dumps(notice))
-        Conn_list.append(self)
 
     async def notify_user(self, event):
         user_id = event["user_id"]
