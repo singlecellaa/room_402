@@ -17,6 +17,8 @@ Including another URLconf
 
 # from django.contrib import admin
 from django.urls import path
+from rest_framework import permissions
+
 from reservation import views
 from message import views as message_view
 from user.views import sign, login
@@ -28,7 +30,6 @@ from rest_framework_simplejwt.views import (
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-
 # 'get':'retrive','put':'update','delete':'destroy'
 
 urlpatterns = [
@@ -37,13 +38,13 @@ urlpatterns = [
                   path('cancel/', views.CancelView.as_view({'get': 'list'})),
                   path('cancel/<int:pk>',
                        views.CancelView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
-                  path('feedback/', message_view.FeedbackView.as_view({'post':'save_feedback'})),
-                  path('dsyfunc/', message_view.DsyfuncView.as_view({'post':'save_dsyfunc','get':'get_broadcast'})),
-                  path('broadcast/', message_view.BroadcastView.as_view({'post':'save_broadcast'})),
-                  path('notice/',message_view.NoticeView.as_view({'post':'read'})),
-                  path('notice/',message_view.NoticeView.as_view({'get_unread_notice_number'})),
-                  path('notice/all',message_view.NoticeView.as_view({'get':'get_all_notice'})),
-                  path('notice/some',message_view.NoticeView.as_view({'get':'get_notice'})),
+                  path('feedback/', message_view.FeedbackView.as_view({'post': 'save_feedback'})),
+                  path('dsyfunc/', message_view.DsyfuncView.as_view({'post': 'save_dsyfunc'})),
+                  path('broadcast/', message_view.BroadcastView.as_view({'post': 'save_broadcast', 'get': 'get_broadcast'})),
+                  path('notice/', message_view.NoticeView.as_view({'put': 'sign_read'})),
+                  path('notice/', message_view.NoticeView.as_view({'get_unread_notice_number'})),
+                  path('notice/all', message_view.NoticeView.as_view({'get': 'get_all_notice'})),
+                  path('notice/some', message_view.NoticeView.as_view({'get': 'get_notice'})),
                   path('sign/', views.SignInAndOutView.as_view({'get': 'list'})),
                   path('sign/<int:pk>', views.SignInAndOutView.as_view({'put': 'update'})),
                   path('api/sign/', sign.SignView.as_view()),
@@ -56,3 +57,5 @@ urlpatterns = [
                   # 上传图片
                   path('admin/', admin.site.urls),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
