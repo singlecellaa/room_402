@@ -10,8 +10,9 @@ from reservation.models import Reservation, User
 class Notice(models.Model):
     objects = models.Manager()
     source = models.IntegerField(choices=((1, '系统消息'), (2, '社团管理员通知'), (3, '房间管理员通知')),
-                                 verbose_name='消息来源')
-    shared_people = models.ManyToManyField(User, related_name='messages')  # 消息呈现给的用户
+                                 verbose_name='消息来源',
+                                 blank=True)
+    shared_people = models.ManyToManyField(User, related_name='messages',blank=True)  # 消息呈现给的用户
     time = models.DateField(auto_now_add=True, verbose_name='时间')  # 反馈创建时间
     content = models.TextField(verbose_name='消息内容')
     read_status = models.BooleanField(blank=False, verbose_name='阅读状态')  # 判断是否已读
