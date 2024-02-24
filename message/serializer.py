@@ -29,7 +29,7 @@ class BroadcastSerializer(serializers.ModelSerializer):
     time = serializers.DateField(format='%m-%d')
     class Meta:
         model = models.Broadcast
-        fields = ['time','description']
+        fields = ['time','broadcast']
 
     def create(self, validated_data):
         return models.Broadcast(**validated_data)
@@ -37,12 +37,12 @@ class BroadcastSerializer(serializers.ModelSerializer):
 class NoticeSerializer(serializers.ModelSerializer):
     content = serializers.CharField(required=True)
     time = serializers.DateField(format='%m-%d')
-    img = serializers.ImageField(required=False)
+    img = serializers.ImageField(required=False, source='img.url')
     source = serializers.IntegerField()
     read_status = serializers.BooleanField(default=False)  # 判断是否已读
     class Meta:
         model = models.Notice
-        fields = ['time','source','read_status','content','img_url','shared_people']
+        fields = ['time','source','read_status','content','shared_people','img']
 
     def get_image_url(self, obj):
         return obj.image_url

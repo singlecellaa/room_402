@@ -160,6 +160,3 @@ class CancelView(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset()).filter(user_id=user_id,state=1)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-
-

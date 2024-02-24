@@ -73,45 +73,47 @@ class NoticeView(ModelViewSet):
     queryset = models.Notice.objects.all()
     serializer_class = NoticeSerializer
 
-    @action(methods=["post"], detail=True)
-    def read(self, pk):
+    @action(methods=["put"], detail=True)
+    def sign_read(self,pk=None):
         """
         标记已读
         """
-        notice: models.Notice = self.get_object()
+        notice = Notice.objects.get(id=pk)
         notice.read_status = True
         notice.save()
         serializer = self.get_serializer(notice)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=True)
-    def get_unread_notice_number(self, user_id=None):
+    def get_unread_notice_number(self, request):
         """
         获取未读信息数量
         """
-        user = User.objects.get(pk=user_id)
+        user = self.request.user
         notice = Notice.objects.filter(shared_people=user)
         unread_notice_count = notice.filter(read_status=False).count()
         response_num = {'value', unread_notice_count}
         return Response(response_num, status=status.HTTP_200_OK)
 
     @action(methods=["get"], detail=False)
-    def get_notice(self, request, user_id=None):
+    def get_notice(self, request):
         """
         获取未读/已读消息
         """
-        user = User.objects.get(pk=user_id)
+        user = self.request.user
         queryset = models.Notice.objects.filter(shared_people=user)
         queryset = queryset.filter(read_status=request.GET.get('read_status'))
         serializer = NoticeSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(methods=["get"], detail=False)
-    def get_all_notice(self, user_id=None):
+    def get_all_notice(self, request):
         """
         获取全部消息
         """
-        user = User.objects.get(pk=user_id)
+        user = self.request.user
         queryset = models.Notice.objects.filter(shared_people=user)
         serializer = NoticeSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
