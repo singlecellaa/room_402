@@ -59,11 +59,15 @@ class SignInAndOutView(ModelViewSet):
         return Response(serializer.data)
     
 class UserModelSerializer(serializers.ModelSerializer):
-    depart = serializers.CharField(read_only=True,source='depart.name')
-    club = serializers.CharField(read_only=True,source='club.name')
+    # depart = serializers.CharField(read_only=True,source='depart.name')
+    # club = serializers.CharField(read_only=True,source='club.name')
     class Meta:
         model = models.User
-        fields = ['name','depart','club']
+        fields = ['id','name','depart','club']
+    extra_kwargs = {
+        'depart':{'read_only':True,'source':'depart.name'},
+        'club':{'read_only':True,'source':'club.name'},
+    }
         
 class ReservationTimeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,16 +79,24 @@ class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     class Meta:
         model = models.Reservation
-        fields = '__all__'
+        fields = ['start_time','end_time','user']
         extra_kwargs = {
-            'on_time':{'read_only':True},
-            'state':{'read_only':True,'source':'get_state_display'}
+            'state':{'read_only':True,'source':'get_state_display'},
         }
         
     def nb_user(self,obj):
-        user_id = obj['user'].id
+        print('obj',obj,type(obj))
+        user_id = obj.user.id  
         queryset = models.User.objects.all().filter(id=user_id)
+        print('queryset',queryset,type(queryset))
+        first = queryset.first()
+        print('first',first,type(first))
+        print('id',first.id)
+        print('name',first.name)
         ser = UserModelSerializer(instance=queryset,many=True)
+        # ser = UserModelSerializer()
+        print('ser',ser)
+        print('ser.data',ser.data)
         return ser.data
     
     def validate_start_time(self,value):
@@ -112,11 +124,13 @@ class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
         return attrs
     
 class ReservationView(ModelViewSet):
+    authentication_classes = []
+    permission_classes = []
     queryset = models.Reservation.objects
     serializer_class = ReservationSerializer
     
     def list(self, request, *args, **kwargs):
-        date = datetime.datetime.fromisoformat(request.query_params['date'])
+        date = datetime.datetime.fromisoformat(request.query_params.get('date'))
         queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=date)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

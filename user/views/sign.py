@@ -25,7 +25,7 @@ class SignView(APIView):
             res['msg'] = '该用户名已存在'
             return Response(res)
 
-        User.objects.create_user(username=username, password=password)
+        User.objects.create(username=username, password=password) #create_user
 
         res['code'] = 200
         return Response(res)

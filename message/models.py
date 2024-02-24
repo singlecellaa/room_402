@@ -86,7 +86,7 @@ def reservation_to_manager_notice(sender, instance, created, **kwargs):
         Notice.objects.create(
             source=1,
             shared_people=User.objects.filter(role=2),
-            content="{}已成功预约{}--{} 402房间".format(instance.user.club.name,
+            content="{}已成功预约{}--{} 402房间".format(instance.user.club_id.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
@@ -98,7 +98,7 @@ def reservation_to_user_notice(sender, instance, created, **kwargs):
         Notice.objects.create(
             source=1,
             shared_people=instance.user,
-            content="您已成功预约{}--{} 402房间".format(instance.user.club.name,
+            content="您已成功预约{}--{} 402房间".format(instance.user.club_id.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
@@ -119,7 +119,7 @@ def del_reservation_to_manager_notice(sender, instance, **kwargs):
     Notice.objects.create(
         source=1,
         shared_people=User.objects.filter(role=2),
-        content="{}已取消{}--{} 对402房间的预约".format(instance.user.club.name,
+        content="{}已取消{}--{} 对402房间的预约".format(instance.user.club_id.name,
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
@@ -130,7 +130,7 @@ def del_reservation_to_user_notice(sender, instance,**kwargs):
     Notice.objects.create(
         source=1,
         shared_people=instance.user,
-        content="您已成功取消{}--{} 对402房间的预约".format(instance.user.club.name,
+        content="您已成功取消{}--{} 对402房间的预约".format(instance.user.club_id.name,
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
