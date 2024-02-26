@@ -84,28 +84,27 @@ def dsyfunc_to_notice(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Reservation)
 def reservation_to_manager_notice(sender, instance, created, **kwargs):
     if created:
-        # Notice.objects.shared_people.set(User.objects.filter(role=2))
-        Notice.objects.create(
+        notice = Notice.objects.create(
             source=1,
-            # shared_people = User.objects.filter(role=2),
             content="{}已成功预约{}--{} 402房间".format(instance.user.club.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
-
+        shared_people = User.objects.filter(role=2)
+        notice.shared_people.set(shared_people)
 
 @receiver(post_save, sender=Reservation)
 def reservation_to_user_notice(sender, instance, created, **kwargs):
     if created:
-        Notice.objects.create(
+        notice = Notice.objects.create(
             source=1,
-            # shared_people=instance.user,
             content="您已成功预约{}--{} 402房间".format(
-                                                        # instance.user.club.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
-
+        user_id = instance.user_id
+        user = User.objects.filter(id=user_id)
+        notice.shared_people.set(user)
 
 @receiver(post_save, sender=Broadcast)
 def broadcast_to_notice(sender, instance, created, **kwargs):
@@ -119,22 +118,23 @@ def broadcast_to_notice(sender, instance, created, **kwargs):
 
 @receiver(pre_delete, sender=Reservation)
 def del_reservation_to_manager_notice(sender, instance, **kwargs):
-    Notice.objects.create(
+    notice = Notice.objects.create(
         source=1,
-        shared_people=User.objects.filter(role=2),
         content="{}已取消{}--{} 对402房间的预约".format(instance.user.club.name,
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
-
+    shared_people = User.objects.filter(role=2)
+    notice.shared_people.set(shared_people)
 
 @receiver(pre_delete, sender=Reservation)
 def del_reservation_to_user_notice(sender, instance,**kwargs):
-    Notice.objects.create(
+    notice = Notice.objects.create(
         source=1,
-        shared_people=instance.user,
         content="您已成功取消{}--{} 对402房间的预约".format(
-                                                    # instance.user.club_id.name,
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
+    user_id = instance.user_id
+    user = User.objects.filter(id=user_id)
+    notice.shared_people.set(user)
