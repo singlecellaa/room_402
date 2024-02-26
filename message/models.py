@@ -63,23 +63,23 @@ class Feedback(models.Model):
 @receiver(post_save, sender=Feedback)
 def feedback_to_notice(sender, instance, created, **kwargs):
     if created:
-        Notice.objects.create(
+        notice = Notice.objects.create(
             source=2,
-            shared_people=User.objects.filter(role=2),
             content=instance.description,
         )
-
+        shared_people = User.objects.filter(role=2)
+        notice.shared_people.set(shared_people)
 
 @receiver(post_save, sender=Dsyfunc)
 def dsyfunc_to_notice(sender, instance, created, **kwargs):
     if created:
-        Notice.objects.create(
+        notice = Notice.objects.create(
             source=2,
-            shared_people=User.objects.filter(role=2),
             content="故障项目：{},具体故障描述：{}".format(instance.item, instance.description),
             img=instance.img
-        )
-
+        )       
+        shared_people = User.objects.filter(role=2)
+        notice.shared_people.set(shared_people)
 
 @receiver(post_save, sender=Reservation)
 def reservation_to_manager_notice(sender, instance, created, **kwargs):
@@ -109,11 +109,13 @@ def reservation_to_user_notice(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Broadcast)
 def broadcast_to_notice(sender, instance, created, **kwargs):
     if created:
-        Notice.objects.create(
+        notice = Notice.objects.create(
             source=3,
-            shared_people=User.objects.filter(role=1),
+            # shared_people=User.objects.filter(role=1),
             content=instance.broadcast,
         )
+        shared_people=User.objects.filter(role=1)
+        notice.shared_people.set(shared_people)
 
 
 @receiver(pre_delete, sender=Reservation)
