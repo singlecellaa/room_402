@@ -15,7 +15,7 @@ class Notice(models.Model):
     shared_people = models.ManyToManyField(User, related_name='messages',blank=True)  # 消息呈现给的用户
     time = models.DateField(auto_now_add=True, verbose_name='时间')  # 反馈创建时间
     content = models.TextField(verbose_name='消息内容')
-    read_status = models.BooleanField(blank=False, verbose_name='阅读状态')  # 判断是否已读
+    read_status = models.BooleanField(default=False, verbose_name='阅读状态')  # 判断是否已读
     img = models.ImageField(verbose_name='图片', upload_to='images/', blank=True)
 
     def __str__(self):
@@ -84,9 +84,10 @@ def dsyfunc_to_notice(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Reservation)
 def reservation_to_manager_notice(sender, instance, created, **kwargs):
     if created:
+        # Notice.objects.shared_people.set(User.objects.filter(role=2))
         Notice.objects.create(
             source=1,
-            shared_people=User.objects.filter(role=2),
+            # shared_people = User.objects.filter(role=2),
             content="{}已成功预约{}--{} 402房间".format(instance.user.club.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -98,8 +99,9 @@ def reservation_to_user_notice(sender, instance, created, **kwargs):
     if created:
         Notice.objects.create(
             source=1,
-            shared_people=instance.user,
-            content="{}已成功预约{}--{} 402房间".format(instance.user.club.name,
+            # shared_people=instance.user,
+            content="您已成功预约{}--{} 402房间".format(
+                                                        # instance.user.club.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
