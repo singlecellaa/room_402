@@ -1,0 +1,1 @@
+docker run -it --network=traefik --label "traefik.enable=true" --label "traefik.http.routers.room_402.rule=Host(\`api.room_402.temp.ziqiang.net.cn\`)" --label "traefik.http.routers.room_402.entrypoints=websecure" --label "traefik.http.services.room_402.loadbalancer.server.port=8086" --name starter room_402
