@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager
 
 class User(AbstractUser):
-    objects = models.Manager()
+    objects = UserManager()
     role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
     name = models.CharField(max_length=10, null=True)
-    # phone_number = models.PhoneNumberField()
     
     depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE, null=True)
     club = models.ForeignKey(to='Club',on_delete=models.CASCADE, null=True)
