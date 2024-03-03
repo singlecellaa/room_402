@@ -1,9 +1,9 @@
 from rest_framework import status
 from rest_framework.response import Response
-
-from message.serializer import NoticeSerializer
 from message.models import Notice
-from reservation.models import Reservation,Club
+from message.serializer import NoticeSerializer
+
+from reservation.models import Reservation, Club, User
 import datetime
 
 def evaluate_state():
@@ -16,7 +16,7 @@ def evaluate_state():
                 reservation.state = 3
             reservation.save()
             
-def evaluate_breach():
+def evaluate_breach(instance):
     reservations = Reservation.objects
     for reservation in reservations.iterator():
         now = datetime.datetime.now().astimezone()
@@ -28,10 +28,9 @@ def evaluate_breach():
             else:
                 reservation.on_time = 2
                 #写入notice
-                notice = NoticeSerializer(content="您预约使用{}--{} 402房间未准时到达，记录违约".format(reservation.start_time,reservation.end_time),
-                                          shared_people=reservation.user,
+                notice =Notice.objects.create(content="您预约使用{}--{} 402房间未准时到达，记录违约".format(reservation.start_time,reservation.end_time),
                                           source=1)
-
+                notice.shared_people.set(reservation.user)
                 if not notice.is_valid():
                     return Response(notice.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
@@ -43,12 +42,11 @@ def evaluate_breach():
             else:
                 reservation.over_time = 2
                 # 写入notice
-                notice = NoticeSerializer(
+                notice = Notice.objects.create(
                     content="您预约使用{}--{} 402房间未准时离开，记录违约".format(reservation.start_time,
                                                                                  reservation.end_time),
-                    shared_people=reservation.user,
                     source=1)
-
+                notice.shared_people.set(reservation.user)
                 if not notice.is_valid():
                     return Response(notice.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
