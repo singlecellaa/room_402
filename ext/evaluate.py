@@ -30,7 +30,7 @@ def evaluate_breach(instance):
                 #写入notice
                 notice =Notice.objects.create(content="您预约使用{}--{} 402房间未准时到达，记录违约".format(reservation.start_time,reservation.end_time),
                                           source=1)
-                notice.shared_people.set(reservation.user)
+                notice.shared_people.set(User.objects.filter(role=2))
                 if not notice.is_valid():
                     return Response(notice.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
@@ -46,7 +46,7 @@ def evaluate_breach(instance):
                     content="您预约使用{}--{} 402房间未准时离开，记录违约".format(reservation.start_time,
                                                                                  reservation.end_time),
                     source=1)
-                notice.shared_people.set(reservation.user)
+                notice.shared_people.set(User.objects.filter(role=2))
                 if not notice.is_valid():
                     return Response(notice.errors, status=status.HTTP_400_BAD_REQUEST)
                 else:
