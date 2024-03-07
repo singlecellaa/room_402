@@ -16,7 +16,7 @@ def evaluate_state():
                 reservation.state = 3
             reservation.save()
             
-def evaluate_breach(instance):
+def evaluate_breach():
     reservations = Reservation.objects
     for reservation in reservations.iterator():
         now = datetime.datetime.now().astimezone()
