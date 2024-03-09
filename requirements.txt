@@ -3,6 +3,7 @@ channels==4.0.0
 Django==4.2.10
 djangorestframework==3.14.0
 djangorestframework_simplejwt==5.3.1
+django-simpleui
 
 #before the command run
 # asgiref==3.7.2

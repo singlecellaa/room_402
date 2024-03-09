@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,9 @@ INSTALLED_APPS = [
     'message',
     'user',
 ]
+
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_ANALYSIS = False
 
 # 修改DRF认证
 REST_FRAMEWORK = {
