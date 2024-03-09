@@ -58,7 +58,7 @@ class BroadcastView(ModelViewSet):
             return Response(broadcast.data, status=status.HTTP_201_CREATED)
 
     @action(methods=["get"], detail=False)
-    def get_broadcast(self):
+    def get_broadcast(self,request):
         """
         获取最新公告
         """
