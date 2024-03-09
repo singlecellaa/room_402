@@ -16,6 +16,8 @@ class SignView(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
         re_password = request.data.get('re_password')
+        depart_id = request.data.get('depart_id')
+        club_id = request.data.get('club_id')
         if password != re_password:
             res['msg'] = '两次密码输入不一致'
             return Response(res)
@@ -25,7 +27,10 @@ class SignView(APIView):
             res['msg'] = '该用户名已存在'
             return Response(res)
 
-        User.objects.create_user(username=username, password=password) #create_user
+        user = User.objects.create_user(username=username, password=password) #create_user
+        user.depart_id = depart_id
+        user.club_id = club_id
+        user.save()
 
         res['code'] = 200
         return Response(res)
