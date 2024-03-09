@@ -6,8 +6,6 @@ from rest_framework.viewsets import ModelViewSet
 from message import models
 from message.models import Notice
 from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer, BroadcastSerializer
-from reservation.models import User
-
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
@@ -17,6 +15,7 @@ class DsyfuncView(ModelViewSet):
         """
         存储故障报修信息
         """
+
         dsyfunc = DsyfuncSerializer(data=request.data)
 
         if not dsyfunc.is_valid():
@@ -29,7 +28,6 @@ class DsyfuncView(ModelViewSet):
 class FeedbackView(ModelViewSet):
     queryset = models.Feedback.objects
     serializer_class = FeedbackSerializer
-
     def save_feedback(self, request):
         """
         存储意见信息
@@ -60,12 +58,12 @@ class BroadcastView(ModelViewSet):
             return Response(broadcast.data, status=status.HTTP_201_CREATED)
 
     @action(methods=["get"], detail=False)
-    def get_broadcast(self, request, user_id=None):
+    def get_broadcast(self):
         """
         获取最新公告
         """
-        queryset = models.Broadcast.objects.order_by('-id').first()
-        serializer = NoticeSerializer(queryset)
+        queryset = models.Broadcast.objects.order_by('id').first()
+        serializer = BroadcastSerializer(queryset)
         return Response(serializer.data)
 
 
