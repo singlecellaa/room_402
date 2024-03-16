@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-qbobtp%2^=e_n01om04^-xx*i!ff3m#(tqkyt8@&gk8fpc#)!(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.room402.temp.ziqiang.net.cn']
 
 
 # Application definition

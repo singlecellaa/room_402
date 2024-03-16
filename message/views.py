@@ -7,7 +7,7 @@ from message import models
 from message.models import Notice
 from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer, BroadcastSerializer
 from reservation.models import User
-
+from ext import evaluate
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
@@ -68,7 +68,12 @@ class BroadcastView(ModelViewSet):
         serializer = NoticeSerializer(queryset)
         return Response(serializer.data)
 
-
+    @action(methods=["get"],detail=False)
+    def evaluate(self,request):
+        evaluate.evaluate_state()
+        evaluate.evaluate_breach()
+        evaluate.get_breach_time()
+        
 class NoticeView(ModelViewSet):
     queryset = models.Notice.objects.all()
     serializer_class = NoticeSerializer

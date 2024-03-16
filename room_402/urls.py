@@ -30,7 +30,7 @@ from rest_framework_simplejwt.views import (
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-# 'get':'retrive','put':'update','delete':'destroy'
+
 
 urlpatterns = [
                   # path('admin/', admin.site.urls),

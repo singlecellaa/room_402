@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
+from django.core.validators import MaxLengthValidator,MinLengthValidator
 
 class User(AbstractUser):
     objects = UserManager()
     role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
     name = models.CharField(max_length=10, null=True)
-    
+    student_id = models.CharField(max_length=13,validator=[MaxLengthValidator(13),MinLengthValidator(13)])
     depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE, null=True)
     club = models.ForeignKey(to='Club',on_delete=models.CASCADE, null=True)
     
@@ -22,6 +23,7 @@ class Club(models.Model):
     
 class Reservation(models.Model):
     objects = models.Manager()
+    theme = models.TextField()
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     sign_in_time = models.DateTimeField(blank=True,null=True)
