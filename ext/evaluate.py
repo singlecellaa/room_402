@@ -30,7 +30,7 @@ def evaluate_breach():
                 #写入notice
                 notice =Notice.objects.create(content="您预约使用{}--{} 402房间未准时到达，记录违约".format(reservation.start_time,reservation.end_time),
                                           source=1)
-                notice.shared_people.set(User.objects.filter(role=2))
+                notice.shared_people.set(reservation.user)
         if now > end_ddl:
             if reservation.sign_out_time != None and reservation.sign_out_time < end_ddl:
                 reservation.over_time = 1
@@ -41,7 +41,7 @@ def evaluate_breach():
                     content="您预约使用{}--{} 402房间未准时离开，记录违约".format(reservation.start_time,
                                                                                  reservation.end_time),
                     source=1)
-                notice.shared_people.set(User.objects.filter(role=2))
+                notice.shared_people.set(reservation.user)
         reservation.save()
         
 def get_breach_time():
