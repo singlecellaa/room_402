@@ -42,7 +42,6 @@ urlpatterns = [
                   path('dsyfunc/', message_view.DsyfuncView.as_view({'post': 'save_dsyfunc'})),
                   path('broadcast/', message_view.BroadcastView.as_view({'post': 'save_broadcast', 'get': 'get_broadcast'})),
                   path('notice/', message_view.NoticeView.as_view({'put': 'sign_read'})),
-                  path('notice/', message_view.NoticeView.as_view({'get_unread_notice_number'})),
                   path('notice/all', message_view.NoticeView.as_view({'get': 'get_all_notice'})),
                   path('notice/some', message_view.NoticeView.as_view({'get': 'get_notice'})),
                   path('sign/', views.SignInAndOutView.as_view({'get': 'list'})),

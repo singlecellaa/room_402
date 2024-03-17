@@ -102,8 +102,7 @@ def reservation_to_user_notice(sender, instance, created, **kwargs):
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
-        user_id = instance.user_id
-        user = User.objects.filter(id=user_id)
+        user = instance.user
         notice.shared_people.set(user)
 
 @receiver(post_save, sender=Broadcast)
@@ -111,7 +110,6 @@ def broadcast_to_notice(sender, instance, created, **kwargs):
     if created:
         notice = Notice.objects.create(
             source=3,
-            # shared_people=User.objects.filter(role=1),
             content=instance.broadcast,
         )
         shared_people=User.objects.filter(role=1)
@@ -137,6 +135,5 @@ def del_reservation_to_user_notice(sender, instance,**kwargs):
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
-    user_id = instance.user_id
-    user = User.objects.filter(id=user_id)
+    user = instance.user
     notice.shared_people.set(user)
