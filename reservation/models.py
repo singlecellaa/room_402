@@ -7,7 +7,7 @@ class User(AbstractUser):
     objects = UserManager()
     role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
     name = models.CharField(max_length=10, null=True)
-    student_id = models.CharField(max_length=13,validator=[MaxLengthValidator(13),MinLengthValidator(13)])
+    student_id = models.CharField(max_length=13,validators=[MaxLengthValidator(13),MinLengthValidator(13)])
     depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE, null=True)
     club = models.ForeignKey(to='Club',on_delete=models.CASCADE, null=True)
     

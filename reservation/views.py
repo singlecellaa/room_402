@@ -5,7 +5,7 @@ from ext import evaluate
 from rest_framework import status
 import datetime
 from reservation.serializer import SignSerializer,ReservationSerializer,CancelSerializer
-
+from rest_framework import exceptions
 
 class SignInAndOutView(ModelViewSet):
     authentication_classes = []
@@ -27,6 +27,9 @@ class SignInAndOutView(ModelViewSet):
         
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         # option = int(request.query_params['option'])
+        validator = request.data['validator']
+        if validator == 2:
+            raise exceptions.ValidationError('不在有效的区域内')
         option = request.data['option']
         if option == 1:
             option = 'sign_in_time'
@@ -61,8 +64,10 @@ class ReservationView(ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
-        request.data['user'] = int(user_id)
-        serializer = self.get_serializer(data=request.data)
+        data = request.data.copy()
+        # data._mutable=True
+        data['user'] = int(user_id)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
