@@ -49,6 +49,7 @@ urlpatterns = [
                   path('api/sign/', sign.SignView.as_view()),
                   # 获取Token的接口
                   path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+                  path('wx/login/', login.WXLoginView.as_view()),
                   # 刷新Token有效期的接口
                   path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
                   # 验证Token的有效性
