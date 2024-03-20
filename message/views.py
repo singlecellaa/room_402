@@ -75,13 +75,10 @@ class BroadcastView(ModelViewSet):
         """
         queryset = models.Broadcast.objects.order_by('id').first()
         serializer = BroadcastSerializer(queryset)
-        return Response(serializer.data)
-
-    @action(methods=["get"],detail=False)
-    def evaluate(self,request):
         evaluate.evaluate_state()
         evaluate.evaluate_breach()
         evaluate.get_breach_time()
+        return Response(serializer.data)
         
 class NoticeView(ModelViewSet):
     queryset = models.Notice.objects.all()
