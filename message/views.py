@@ -98,17 +98,6 @@ class NoticeView(ModelViewSet):
         serializer = self.get_serializer(notice)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(methods=["get"], detail=True)
-    def get_unread_notice_number(self, request):
-        """
-        获取未读信息数量
-        """
-        user = self.request.user
-        notice = Notice.objects.filter(shared_people=user)
-        unread_notice_count = notice.filter(read_status=False).count()
-        response_num = {'value', unread_notice_count}
-        return Response(response_num, status=status.HTTP_200_OK)
-
     @action(methods=["get"], detail=False)
     def get_notice(self, request):
         """

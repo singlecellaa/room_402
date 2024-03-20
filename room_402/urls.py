@@ -42,7 +42,6 @@ urlpatterns = [
                   path('dsyfunc/', message_view.DsyfuncView.as_view({'post': 'save_dsyfunc'})),
                   path('broadcast/', message_view.BroadcastView.as_view({'post': 'save_broadcast', 'get': 'get_broadcast'})),
                   path('notice/', message_view.NoticeView.as_view({'put': 'sign_read'})),
-                  path('notice/', message_view.NoticeView.as_view({'get_unread_notice_number'})),
                   path('notice/all', message_view.NoticeView.as_view({'get': 'get_all_notice'})),
                   path('notice/some', message_view.NoticeView.as_view({'get': 'get_notice'})),
                   path('sign/', views.SignInAndOutView.as_view({'get': 'list'})),
@@ -50,6 +49,7 @@ urlpatterns = [
                   path('api/sign/', sign.SignView.as_view()),
                   # 获取Token的接口
                   path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+                  path('wx/login/', login.WXLoginView.as_view()),
                   # 刷新Token有效期的接口
                   path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
                   # 验证Token的有效性
