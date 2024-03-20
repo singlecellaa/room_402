@@ -29,7 +29,7 @@ class Reservation(models.Model):
     sign_in_time = models.DateTimeField(blank=True,null=True)
     sign_out_time = models.DateTimeField(blank=True,null=True)
     state = models.IntegerField(choices=((1,'未开始'),(2,'正在进行'),(3,'已结束')),default=1)
-    on_time = models.IntegerField(choices=((1,'准时到达'),(2,'未准时')),blank=True,null=True)
+    on_time = models.IntegerField(choices=((1,'准时'),(2,'迟到')),blank=True,null=True)
     over_time = models.IntegerField(choices=((1,'未超时'),(2,'超时')),blank=True,null=True)
     user = models.ForeignKey(to='User',on_delete=models.CASCADE,blank=True,null=True)
     class Meta:
