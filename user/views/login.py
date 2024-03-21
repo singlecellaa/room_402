@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import MyTokenObtainPairSerializer
+from rest_framework import permissions
+from room_app.models import User
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
@@ -10,6 +12,7 @@ class MyObtainTokenPairView(TokenObtainPairView):
 
 
 class WXLoginView(APIView):
+    permission_classes = [permissions.AllowAny]
     def get(self, request):
         res = {
             'code': 200,
@@ -27,6 +30,7 @@ class WXLoginView(APIView):
         }
         response = requests.get(wx_api_url, params=params)
         data = response.json()
+        print(data)
         # 处理获取到的用户信息
         res['data'] = data
         # 对用户进行认证和管理操作
