@@ -21,7 +21,7 @@ from rest_framework import permissions
 
 from reservation import views
 from message import views as message_view
-from user.views import sign, login
+from user.views import sign, login,record
 # 导入 simplejwt 提供的几个验证视图类
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -50,6 +50,7 @@ urlpatterns = [
                   # 获取Token的接口
                   path('api/login/', login.MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
                   path('wx/login/', login.WXLoginView.as_view()),
+                  path('api/record',record.RecordView.as_view({'get':'list'})),
                   # 刷新Token有效期的接口
                   path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
                   # 验证Token的有效性
