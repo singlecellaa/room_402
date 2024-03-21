@@ -35,9 +35,11 @@ class ReservationTimeSerializer(serializers.ModelSerializer):
 class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
+    sign_in_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
+    sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     class Meta:
         model = models.Reservation
-        fields = ['id','theme','start_time','end_time','user','state']
+        fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','user','state']
         extra_kwargs = {
             'state':{'read_only':True,'source':'get_state_display'},
         }
