@@ -7,6 +7,8 @@ from message import models
 from message.models import Notice
 from message.serializer import DsyfuncSerializer, FeedbackSerializer, NoticeSerializer, BroadcastSerializer
 from ext import evaluate
+from reservation.models import User
+
 
 class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
@@ -103,7 +105,9 @@ class NoticeView(ModelViewSet):
         """
         获取未读/已读消息
         """
-        user = self.request.user
+
+        user_id = request.query_params.get('user_id')
+        user=User.objects.get(id=user_id)
         queryset = models.Notice.objects.filter(shared_people=user)
         queryset = queryset.filter(read_status=request.GET.get('read_status'))
         serializer = NoticeSerializer(queryset, many=True)
@@ -114,7 +118,8 @@ class NoticeView(ModelViewSet):
         """
         获取全部消息
         """
-        user = self.request.user
+        user_id = request.query_params.get('user_id')
+        user = User.objects.get(id=user_id)
         queryset = models.Notice.objects.filter(shared_people=user)
         serializer = NoticeSerializer(queryset, many=True)
         return Response(serializer.data)
