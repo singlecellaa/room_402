@@ -34,7 +34,7 @@ class WXLoginView(APIView):
         user = User.objects.filter(username=open_id).first()
         if not user:
             user = User.objects.create_user(username=open_id, password=123456)
-        data['user_id'] = user
+        data['user_id'] = user.id
         # 处理获取到的用户信息
         res['data'] = data
         # 对用户进行认证和管理操作
