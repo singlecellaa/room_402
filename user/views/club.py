@@ -6,14 +6,14 @@ from rest_framework import permissions
 
 class ClubView(APIView):
     permission_classes = [permissions.AllowAny]
-    def get(self):
+    def get(self, request):
         res = {
             'code': 500,
             'msg': 'success',
             'data': []
         }
-
-        club = Club.objects.all()
+        depart_id = request.GET.get('depart_id')
+        club = Club.objects.filter(depart_id=depart_id)
         for cl in club:
             res['data'].append({
                 'id': cl.id,
