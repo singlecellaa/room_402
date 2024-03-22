@@ -17,7 +17,8 @@ class WXLoginView(APIView):
         res = {
             'code': 200,
             'msg': 'success',
-            'date': {}
+            'date': {},
+            'is_first': 0
         }
         code = request.GET.get('code')  # 从前端获取code
         # 向微信API发送请求，获取用户信息等操作
@@ -33,6 +34,7 @@ class WXLoginView(APIView):
         open_id = data['open_id']
         user = User.objects.filter(username=open_id).first()
         if not user:
+            data['is_first'] = 1
             user = User.objects.create_user(username=open_id, password=123456)
         data['user_id'] = user.id
         # 处理获取到的用户信息
