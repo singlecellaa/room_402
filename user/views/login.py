@@ -23,8 +23,8 @@ class WXLoginView(APIView):
         # 向微信API发送请求，获取用户信息等操作
         wx_api_url = 'https://api.weixin.qq.com/sns/jscode2session'
         params = {
-            'appid': 'wx387b4176018ddc5d',
-            'secret': 'f4b32b94a8004592aed65d5606c61d9d',
+            'appid': 'wxbb790dfebfba6b18',
+            'secret': '92ad213ff31f718a3ab140beb3db90f8',
             'js_code': code,
             'grant_type': 'authorization_code'
         }
