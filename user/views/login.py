@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import MyTokenObtainPairSerializer
 from rest_framework import permissions
+from reservation.models import User
+from django.contrib import auth
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
@@ -16,7 +18,8 @@ class WXLoginView(APIView):
         res = {
             'code': 200,
             'msg': 'success',
-            'date': {}
+            'date': {},
+            'is_first': 0
         }
         code = request.GET.get('code')  # 从前端获取code
         # 向微信API发送请求，获取用户信息等操作
@@ -29,7 +32,13 @@ class WXLoginView(APIView):
         }
         response = requests.get(wx_api_url, params=params)
         data = response.json()
-        print(data)
+        open_id = data['open_id']
+        user = User.objects.filter(username=open_id).first()
+        if not user:
+            data['is_first'] = 1
+            user = User.objects.create_user(username=open_id, password=123456)
+        auth.login(request, user)
+        data['user_id'] = user.id
         # 处理获取到的用户信息
         res['data'] = data
         # 对用户进行认证和管理操作
