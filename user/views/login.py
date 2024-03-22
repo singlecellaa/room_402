@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import MyTokenObtainPairSerializer
 from rest_framework import permissions
 from reservation.models import User
+from django.contrib import auth
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
@@ -36,6 +37,7 @@ class WXLoginView(APIView):
         if not user:
             data['is_first'] = 1
             user = User.objects.create_user(username=open_id, password=123456)
+        auth.login(request, user)
         data['user_id'] = user.id
         # 处理获取到的用户信息
         res['data'] = data
