@@ -32,7 +32,7 @@ class WXLoginView(APIView):
         }
         response = requests.get(wx_api_url, params=params)
         data = response.json()
-        open_id = data['open_id']
+        open_id = data['openid']
         user = User.objects.filter(username=open_id).first()
         if not user:
             data['is_first'] = 1
