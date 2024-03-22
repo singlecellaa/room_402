@@ -30,7 +30,11 @@ class WXLoginView(APIView):
         }
         response = requests.get(wx_api_url, params=params)
         data = response.json()
-        print(data)
+        open_id = data['open_id']
+        user = User.objects.filter(username=open_id).first()
+        if not user:
+            user = User.objects.create_user(username=open_id, password=123456)
+        data['user_id'] = user
         # 处理获取到的用户信息
         res['data'] = data
         # 对用户进行认证和管理操作
