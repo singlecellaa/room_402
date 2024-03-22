@@ -9,28 +9,18 @@ class SignView(APIView):
     def post(self, request):
         res = {
             'code': 500,
-            'msg': '注册成功',
+            'msg': '填写成功',
             'data': []
         }
 
-        username = request.data.get('username')
-        password = request.data.get('password')
-        re_password = request.data.get('re_password')
+        name = request.data.get('name')
+        user_id = request.data.get('user_id')
+        student_id = request.data.get('student_id')
         depart_id = request.data.get('depart_id')
         club_id = request.data.get('club_id')
-        if password != re_password:
-            res['msg'] = '两次密码输入不一致'
-            return Response(res)
 
-        user = User.objects.filter(username=username)
-        if user:
-            res['msg'] = '该用户名已存在'
-            return Response(res)
+        user_query = User.objects.filter(id=user_id)
 
-        user = User.objects.create_user(username=username, password=password) #create_user
-        user.depart_id = depart_id
-        user.club_id = club_id
-        user.save()
-
+        user_query.update(name=name, student_id=student_id, depart_id=depart_id, club_id=club_id)
         res['code'] = 200
         return Response(res)
