@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from user.serializers import MyTokenObtainPairSerializer
 from rest_framework import permissions
-from room_app.models import User
+from reservation.models import User
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
