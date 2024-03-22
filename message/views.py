@@ -12,9 +12,6 @@ class DsyfuncView(ModelViewSet):
     queryset = models.Dsyfunc.objects
     serializer_class = DsyfuncSerializer
     
-    authentication_classes = []
-    permission_classes = []
-    
     def save_dsyfunc(self, request):
         """
         存储故障报修信息
@@ -33,9 +30,6 @@ class FeedbackView(ModelViewSet):
     queryset = models.Feedback.objects
     serializer_class = FeedbackSerializer
     
-    authentication_classes = []
-    permission_classes = []
-    
     def save_feedback(self, request):
         """
         存储意见信息
@@ -52,9 +46,6 @@ class FeedbackView(ModelViewSet):
 class BroadcastView(ModelViewSet):
     queryset = models.Broadcast.objects
     serializer_class = BroadcastSerializer
-
-    authentication_classes = []
-    permission_classes = []
     
     def save_broadcast(self, request):
         """
@@ -83,10 +74,6 @@ class BroadcastView(ModelViewSet):
 class NoticeView(ModelViewSet):
     queryset = models.Notice.objects.all()
     serializer_class = NoticeSerializer
-
-    authentication_classes = []
-    permission_classes = []
-    
     @action(methods=["put"], detail=True)
     def sign_read(self,pk=None):
         """

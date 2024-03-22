@@ -8,16 +8,13 @@ from reservation.serializer import SignSerializer,ReservationSerializer,CancelSe
 from rest_framework import exceptions
 
 class SignInAndOutView(ModelViewSet):
-    authentication_classes = []
-    permission_classes = []
     queryset = models.Reservation.objects
     serializer_class = SignSerializer
 
     def list(self, request, *args, **kwargs):
         now = datetime.datetime.now().astimezone()
         today = now.date()
-        user_id = request.query_params['user_id']
-        queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=today,start_time__lte=now,end_time__gte=now-datetime.timedelta(minutes=10),user_id=user_id)
+        queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=today,start_time__lte=now,end_time__gte=now-datetime.timedelta(minutes=10),user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -26,11 +23,14 @@ class SignInAndOutView(ModelViewSet):
         instance = self.get_object()
         
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-        # option = int(request.query_params['option'])
-        validator = request.data['validator']
+        validator = request.data.get('validator')
+        
         if validator == 2:
             raise exceptions.ValidationError('不在有效的区域内')
-        option = request.data['option']
+        elif not validator:
+            raise exceptions.ValidationError('缺少validator字段')
+        
+        option = request.data.get('option')
         if option == 1:
             option = 'sign_in_time'
         elif option == 2:
@@ -51,8 +51,6 @@ class SignInAndOutView(ModelViewSet):
         return Response(serializer.data)
     
 class ReservationView(ModelViewSet):
-    authentication_classes = []
-    permission_classes = []
     queryset = models.Reservation.objects
     serializer_class = ReservationSerializer
     
@@ -61,26 +59,13 @@ class ReservationView(ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset()).filter(start_time__date=date)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-    
-    def create(self, request, *args, **kwargs):
-        user_id = request.query_params.get('user_id')
-        data = request.data.copy()
-        # data._mutable=True
-        data['user'] = int(user_id)
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class CancelView(ModelViewSet):
-    authentication_classes = []
-    permission_classes = []
     queryset = models.Reservation.objects
     serializer_class = CancelSerializer
     
     def list(self, request, *args, **kwargs):
-        user_id = request.query_params.get('user_id')
-        queryset = self.filter_queryset(self.get_queryset()).filter(user_id=user_id,state=1)
+        user= request.user 
+        queryset = self.filter_queryset(self.get_queryset()).filter(state=1)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

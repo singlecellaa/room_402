@@ -37,7 +37,7 @@ urlpatterns = [
                   path('reservation/', views.ReservationView.as_view({'get': 'list', 'post': 'create'})),
                   path('cancel/', views.CancelView.as_view({'get': 'list'})),
                   path('cancel/<int:pk>',
-                       views.CancelView.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+                       views.CancelView.as_view({'delete': 'destroy'})),
                   path('feedback/', message_view.FeedbackView.as_view({'post': 'save_feedback'})),
                   path('dsyfunc/', message_view.DsyfuncView.as_view({'post': 'save_dsyfunc'})),
                   path('broadcast/', message_view.BroadcastView.as_view({'post': 'save_broadcast', 'get': 'get_broadcast'})),

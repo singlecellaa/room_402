@@ -4,13 +4,23 @@ from reservation import models
 from rest_framework import exceptions
 import datetime
 
+class UserModelSerializer(serializers.ModelSerializer):
+    depart = serializers.CharField(read_only=True,source='depart.name')
+    club = serializers.CharField(read_only=True,source='club.name')
+    class Meta:
+        model = models.User
+        fields = ['id','name','depart','club']
+        
 class SignSerializer(serializers.ModelSerializer):
+    # id = serializers.IntegerField(read_only=True)
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     sign_in_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False,read_only=False)
     sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False,read_only=False)
     theme = serializers.CharField(read_only=True)
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    # user = serializers.PrimaryKeyRelatedField(read_only=True)
+    user = UserModelSerializer(read_only=True)
+    
     class Meta:
         model = models.Reservation
         fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','user']
@@ -19,13 +29,6 @@ class SignSerializer(serializers.ModelSerializer):
         'user':{'read_only':True},
         'theme':{'read_only':True},
     }
-    
-class UserModelSerializer(serializers.ModelSerializer):
-    depart = serializers.CharField(read_only=True,source='depart.name')
-    club = serializers.CharField(read_only=True,source='club.name')
-    class Meta:
-        model = models.User
-        fields = ['id','name','depart','club']
         
 class ReservationTimeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,13 +36,15 @@ class ReservationTimeSerializer(serializers.ModelSerializer):
         fields = ['start_time','end_time']
         
 class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
+    name = serializers.CharField(source='user.name',read_only=True)
+    # user = serializers.IntegerField(source='user')
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     sign_in_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     class Meta:
         model = models.Reservation
-        fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','user','state']
+        fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','name','state','user']
         extra_kwargs = {
             'state':{'read_only':True,'source':'get_state_display'},
         }

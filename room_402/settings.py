@@ -56,6 +56,8 @@ SIMPLEUI_ANALYSIS = False
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # 使用rest_framework_simplejwt(token)验证身份
+        'ext.auth.QueryParamsAuthentication',
+        'ext.auth.HeaderAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # 基于用户名密码认证方式
         'rest_framework.authentication.BasicAuthentication'  # 基于Session认证方式
     ],
@@ -90,7 +92,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
