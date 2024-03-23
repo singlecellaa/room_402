@@ -6,7 +6,7 @@ from rest_framework import permissions
 
 class DepartView(APIView):
     permission_classes = [permissions.AllowAny]
-    def get(self):
+    def get(self,request):
         res = {
             'code': 500,
             'msg': 'success',

@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from reservation.models import User
 from rest_framework.response import Response
 
-
 class SignView(APIView):
     permission_classes = []
 

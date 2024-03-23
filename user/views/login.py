@@ -32,11 +32,13 @@ class WXLoginView(APIView):
         }
         response = requests.get(wx_api_url, params=params)
         data = response.json()
-        open_id = data['open_id']
+        open_id = data.get('openid')
+        print('openid',open_id)
+        role = request.query_params.get('role')
         user = User.objects.filter(username=open_id).first()
         if not user:
             data['is_first'] = 1
-            user = User.objects.create_user(username=open_id, password=123456)
+            user = User.objects.create_user(username=open_id, password="123456",role=role)
         auth.login(request, user)
         data['user_id'] = user.id
         # 处理获取到的用户信息

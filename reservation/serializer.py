@@ -18,8 +18,8 @@ class SignSerializer(serializers.ModelSerializer):
     sign_in_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False,read_only=False)
     sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',required=False,read_only=False)
     theme = serializers.CharField(read_only=True)
-    # user = serializers.PrimaryKeyRelatedField(read_only=True)
-    user = UserModelSerializer(read_only=True)
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    # user = UserModelSerializer(read_only=True)
     
     class Meta:
         model = models.Reservation
@@ -36,7 +36,7 @@ class ReservationTimeSerializer(serializers.ModelSerializer):
         fields = ['start_time','end_time']
         
 class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
-    name = serializers.CharField(source='user.name',read_only=True)
+    # name = serializers.CharField(source='user.name',read_only=True)
     # user = serializers.IntegerField(source='user')
     start_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
     end_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M')
@@ -44,16 +44,16 @@ class ReservationSerializer(HookSerializer,serializers.ModelSerializer):
     sign_out_time = serializers.DateTimeField(format='%Y-%m-%d  %H:%M',read_only=True)
     class Meta:
         model = models.Reservation
-        fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','name','state','user']
+        fields = ['id','theme','start_time','end_time','sign_in_time','sign_out_time','state','user']
         extra_kwargs = {
             'state':{'read_only':True,'source':'get_state_display'},
         }
         
-    def nb_user(self,obj):
-        user_id = obj.user.id  
-        queryset = models.User.objects.all().filter(id=user_id)
-        ser = UserModelSerializer(instance=queryset,many=True)
-        return ser.data
+    # def nb_user(self,obj):
+    #     user_id = obj.user.id  
+    #     queryset = models.User.objects.all().filter(id=user_id)
+    #     ser = UserModelSerializer(instance=queryset,many=True)
+    #     return ser.data
     
     # def validate_start_time(self,value):
     #     now = datetime.datetime.now().astimezone()

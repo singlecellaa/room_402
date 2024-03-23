@@ -5,7 +5,7 @@ from django.core.validators import MaxLengthValidator,MinLengthValidator
 
 class User(AbstractUser):
     objects = UserManager()
-    role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')), null=True)
+    role = models.IntegerField(choices=((1,'使用者'),(2,'管理员')),default=1)
     name = models.CharField(max_length=10, null=True)
     student_id = models.CharField(max_length=13,validators=[MaxLengthValidator(13),MinLengthValidator(13)])
     depart = models.ForeignKey(to='Depart',on_delete=models.CASCADE, null=True)
