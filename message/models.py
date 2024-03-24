@@ -90,7 +90,7 @@ def reservation_to_manager_notice(sender, instance, created, **kwargs):
         notice = Notice.objects.create(
             source=1,
             content="{}已成功预约{}--{} 402房间".format('xxx',
-                # instance.user.username,#club.name,
+                # instance.user.club.name,
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
@@ -106,7 +106,7 @@ def reservation_to_user_notice(sender, instance, created, **kwargs):
                                                         instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                         instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
         )
-        user = User.objects.filter(user=instance.user.id)
+        user = User.objects.filter(id=instance.user.id)
         notice.shared_people.set(user)
 
 @receiver(post_save, sender=Broadcast)
@@ -124,7 +124,8 @@ def broadcast_to_notice(sender, instance, created, **kwargs):
 def del_reservation_to_manager_notice(sender, instance, **kwargs):
     notice = Notice.objects.create(
         source=1,
-        content="{}已取消{}--{} 对402房间的预约".format(instance.user,#.club.name,
+        content="{}已取消{}--{} 对402房间的预约".format('xxx',
+            # instance.user.club.name,
                                                     instance.start_time.strftime('%Y-%m-%d %H:%M:%S'),
                                                     instance.end_time.strftime('%Y-%m-%d %H:%M:%S'))
     )
